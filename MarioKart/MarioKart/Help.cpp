@@ -10,8 +10,8 @@ void Help::initalise(sf::Font& t_font)
 	m_message.setString("Use arrow keys to move\nMario Left or right\n<UpArrow> to jump\nMove off stage to finish.\n Escape to pause.\n\n<esc> to return.");
 
 	sf::FloatRect box = m_message.getLocalBounds();
-	float posX = (WIDTH - box.width) / 2.0f;
-	m_message.setPosition(posX, 150.0f);
+	float posX = (WIDTH - box.size.x) / 2.0f;
+	m_message.setPosition(sf::Vector2f{ posX, 150.0f });
 
 }
 
@@ -29,11 +29,12 @@ void Help::update(sf::Time t_deltaTime)
 	}
 }
 
-void Help::processEvents(sf::Event t_event)
+void Help::processEvents(const std::optional<sf::Event> t_event)
 {
-	if (sf::Event::KeyPressed == t_event.type)
+	if (t_event->is<sf::Event::KeyPressed>()) //user pressed a key
 	{
-		if (sf::Keyboard::Escape == t_event.key.code)
+		const sf::Event::KeyPressed* newKeypress = t_event->getIf<sf::Event::KeyPressed>();
+		if (sf::Keyboard::Key::Escape == newKeypress->code)
 		{
 			m_exit = true;
 		}

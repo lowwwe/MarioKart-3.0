@@ -11,7 +11,7 @@ class Licence
 
 private:
 	sf::Font m_font; // local refrence to font from game class
-	sf::Text m_message; // licence text
+	sf::Text m_message{ m_font }; // licence text
 	sf::Time m_cumulativeTime;// timer to count to one second
 };
 

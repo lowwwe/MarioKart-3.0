@@ -18,7 +18,7 @@ bool Game::m_exitGame{ false }; //when true game will exit
 /// load and setup the image
 /// </summary>
 Game::Game() :
-	m_window{ sf::VideoMode{ 800U, 600U, 32U }, "SFML Game" }
+	m_window{ sf::VideoMode{ sf::Vector2u{800U, 600U},32U }, "Mario Kart Game" }
 	
 {
 	setupFontAndText(); // load font 
@@ -31,7 +31,7 @@ Game::Game() :
 
 /// <summary>
 /// default destructor we didn't dynamically allocate anything
-/// so we don't need to free it, but mthod needs to be here
+/// so we don't need to free it, but method needs to be here
 /// </summary>
 Game::~Game()
 {
@@ -71,10 +71,9 @@ void Game::run()
 /// </summary>
 void Game::processEvents()
 {
-	sf::Event newEvent;
-	while (m_window.pollEvent(newEvent))
+	while (const std::optional newEvent = m_window.pollEvent())
 	{
-		if ( sf::Event::Closed == newEvent.type) // window message
+		if (newEvent->is<sf::Event::Closed>()) // close window message 
 		{
 			m_exitGame = true;
 		}
@@ -111,23 +110,35 @@ void Game::processEvents()
 /// deal with key presses from the user
 /// </summary>
 /// <param name="t_event">key press event</param>
-void Game::processKeys(sf::Event t_event)
+void Game::processKeys(const std::optional<sf::Event> t_event)
 {
-	if (sf::Keyboard::Escape == t_event.key.code)
+	if (t_event->is<sf::Event::KeyPressed>()) //user pressed a key
 	{
-		m_exitGame = true;
+		const sf::Event::KeyPressed* newKeypress = t_event->getIf<sf::Event::KeyPressed>();
+		if (sf::Keyboard::Key::Escape == newKeypress->code)
+		{
+			m_exitGame = true;
+		}
 	}
 }
 
-void Game::pauseProcessEvents(sf::Event t_event)
+/// <summary>
+/// deal with key press when game is paused
+/// enter to return to game
+/// </summary>
+/// <param name="t_event">input event</param>
+void Game::pauseProcessEvents(const std::optional<sf::Event> t_event)
 {
-	if (sf::Event::KeyPressed == t_event.type)
+	if (t_event->is<sf::Event::KeyPressed>()) //user pressed a key
 	{
-		if (sf::Keyboard::Return == t_event.key.code)
+		const sf::Event::KeyPressed* newKeypress = t_event->getIf<sf::Event::KeyPressed>();
+		if (sf::Keyboard::Key::Enter == newKeypress->code)
 		{
 			Game::s_currentMode = GameMode::GamePlay;
 		}
+
 	}
+	
 }
 
 /// <summary>
@@ -206,12 +217,10 @@ void Game::render()
 /// </summary>
 void Game::setupFontAndText()
 {
-	if (!m_gameFont.loadFromFile("ASSETS\\FONTS\\ariblk.ttf"))
+	if (!m_gameFont.openFromFile("ASSETS\\FONTS\\ariblk.ttf"))
 	{
 		std::cout << "problem loading arial black font" << std::endl;
 	}
-	
-
 }
 
 

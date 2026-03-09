@@ -9,13 +9,13 @@ class Splash
 		void initialise(sf::Font& t_font);
 		void render(sf::RenderWindow& t_window);
 		
-		void processEvents(sf::Event t_event);
+		void processEvents(const std::optional<sf::Event> t_event);
 
 private:
 	sf::Font m_font; // local refrence to game font
-	sf::Text m_message; // user prompt
+	sf::Text m_message{ m_font }; // user prompt
 	sf::Texture m_wallPaperTexture; // wallpaper image
-	sf::Sprite m_wallPaperSprite; // wallpaperSprite
+	sf::Sprite m_wallPaperSprite{ m_wallPaperTexture }; // wallpaperSprite
 
 
 };
